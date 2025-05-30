@@ -10,19 +10,20 @@ from routes.notes import notes
 app = Flask(__name__)
 app.config.from_object(Config)
 
-CORS(app)
+# CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+
 JWTManager(app)
 
-# เชื่อมต่อ MongoDB ด้วย mongoengine โดยตรง
 connect(
     db=app.config["MONGODB_SETTINGS"]["db"],
     host=app.config["MONGODB_SETTINGS"]["host"],
     port=app.config["MONGODB_SETTINGS"]["port"]
 )
 
-# Register Blueprints
 app.register_blueprint(auth, url_prefix="/api")
 app.register_blueprint(notes, url_prefix="/api")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5003)
