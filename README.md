@@ -46,7 +46,7 @@ npm run dev
 
 > เปิด http://localhost:5173
 
-> ตรวจสอบ `src/api.js` ให้ API_URL ตรงกับ backend (ปกติคือ `http://localhost:5000/api`)
+> ตรวจสอบ `src/api.js` ให้ API_URL ตรงกับ backend (ปกติคือ `http://localhost:5000/api` แต่ผมใช้เป็น 5003 อ สามารถเปลียนได้ภายหลังครับ)
 
 ---
 
@@ -55,24 +55,3 @@ npm run dev
 - ปรับแต่งสี/ธีมง่ายมากด้วย Tailwind CSS
 - สามารถ deploy ได้ทั้ง backend (Heroku, Render, etc.) และ frontend (Vercel, Netlify)
 - หากต้องการฟีเจอร์เพิ่มเติม สามารถ fork และแก้ไขได้ทันที
-
----
-
-## 🌏 English (Short version)
-
-**Daily Notes** is a modern, mobile-friendly note-taking app.
-
-- **Frontend:** React + Tailwind CSS
-- **Backend:** Flask + MongoDB + JWT Auth
-- Features: Register, Login, Create/Read/Update/Delete personal notes, beautiful UI.
-- Quickstart:
-  1. `pip install -r requirements.txt && python app.py` (backend)
-  2. `npm install && npm run dev` (frontend)
-- Easy deploy to Vercel/Netlify/Heroku/Render.
-
----
-
-## 🙌 Thanks & License
-
-โค้ดนี้เผยแพร่เพื่อการศึกษาและใช้งานทั่วไป  
-**ขอให้สนุกกับการจดโน้ตและพัฒนา!**
