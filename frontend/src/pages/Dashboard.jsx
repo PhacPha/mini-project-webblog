@@ -63,43 +63,43 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-pink-100 py-10">
-      <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-2xl p-8">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-2">
-          <h1 className="text-3xl font-extrabold text-pink-700 tracking-tight">📝 Daily Notes</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-10 text-gray-100">
+      <div className="max-w-2xl mx-auto bg-gray-800 rounded-xl p-6 shadow-lg">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-cyan-400">📝 Daily Notes</h1>
           <button
-            className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg font-semibold transition"
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-lg transition"
             onClick={handleLogout}
           >
             Logout
           </button>
         </div>
         {/* ฟอร์มเพิ่มโน้ตใหม่ */}
-        <form onSubmit={handleCreate} className="flex flex-col sm:flex-row gap-2 mb-8">
+        <form onSubmit={handleCreate} className="flex gap-2 mb-6 flex-col sm:flex-row">
           <input
-            className="border rounded-lg px-4 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-pink-300"
+            className="border border-gray-700 bg-gray-900 text-gray-100 rounded-lg px-3 py-2 flex-1 focus:ring-2 focus:ring-cyan-400 outline-none"
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             maxLength={60}
           />
           <input
-            className="border rounded-lg px-4 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-pink-300"
+            className="border border-gray-700 bg-gray-900 text-gray-100 rounded-lg px-3 py-2 flex-1 focus:ring-2 focus:ring-cyan-400 outline-none"
             placeholder="Content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             maxLength={120}
           />
-          <button className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-lg font-semibold transition">
+          <button className="bg-cyan-600 hover:bg-cyan-700 text-white px-5 py-2 rounded-lg transition">
             Add
           </button>
         </form>
-        {msg && <p className="text-green-600 mb-2">{msg}</p>}
+        {msg && <p className="text-green-400 mb-2">{msg}</p>}
 
         {/* รายการโน้ต */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {notes.length === 0 && (
-            <div className="text-center text-gray-400">ยังไม่มีโน้ต</div>
+            <div className="text-center text-gray-500">ยังไม่มีโน้ต</div>
           )}
           {notes.map((note) =>
             editId === note.id ? (
@@ -107,27 +107,27 @@ export default function Dashboard() {
               <form
                 key={note.id}
                 onSubmit={handleUpdate}
-                className="flex flex-col sm:flex-row gap-2 bg-blue-50 p-4 rounded-lg shadow"
+                className="flex gap-2 bg-gray-700 p-3 rounded-lg"
               >
                 <input
-                  className="border rounded-lg px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  className="border border-gray-600 bg-gray-900 text-gray-100 rounded-lg px-2 py-1 flex-1 focus:ring-2 focus:ring-cyan-300 outline-none"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   required
                   maxLength={60}
                 />
                 <input
-                  className="border rounded-lg px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  className="border border-gray-600 bg-gray-900 text-gray-100 rounded-lg px-2 py-1 flex-1 focus:ring-2 focus:ring-cyan-300 outline-none"
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
                   maxLength={120}
                 />
-                <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-lg transition">
+                <button className="bg-green-600 hover:bg-green-700 text-white px-3 rounded-lg transition">
                   Save
                 </button>
                 <button
                   type="button"
-                  className="bg-gray-200 hover:bg-gray-300 px-4 rounded-lg transition"
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-3 rounded-lg"
                   onClick={() => setEditId(null)}
                 >
                   Cancel
@@ -137,22 +137,22 @@ export default function Dashboard() {
               // View Mode
               <div
                 key={note.id}
-                className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50 p-4 rounded-lg shadow"
+                className="flex flex-col sm:flex-row justify-between items-center gap-2 bg-gray-700 p-3 rounded-lg"
               >
                 <div className="flex-1">
-                  <div className="text-lg font-semibold text-gray-800">{note.title}</div>
-                  <div className="text-gray-600">{note.content}</div>
-                  <div className="text-xs text-gray-400 mt-1">{note.created_at}</div>
+                  <div className="text-base font-medium text-cyan-300">{note.title}</div>
+                  <div className="text-gray-300 text-sm">{note.content}</div>
+                  <div className="text-xs text-gray-500 mt-1">{note.created_at}</div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-1">
                   <button
-                    className="bg-yellow-400 hover:bg-yellow-500 px-4 rounded-lg font-semibold transition"
+                    className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 px-3 rounded-lg transition"
                     onClick={() => handleEdit(note)}
                   >
                     Edit
                   </button>
                   <button
-                    className="bg-red-400 hover:bg-red-500 text-white px-4 rounded-lg font-semibold transition"
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 rounded-lg transition"
                     onClick={() => handleDelete(note.id)}
                   >
                     Delete
