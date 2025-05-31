@@ -220,6 +220,8 @@ cd backend
 python app.py
 ```
 
+> สำหรับใครที่รันไม่ได้เหมือนบักที่สร้าง README อันนี้ให้ใช้ `python3` นะจ๊ะะ
+
 - Frontend
 
 ```bash
