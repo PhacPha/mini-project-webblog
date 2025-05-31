@@ -231,3 +231,18 @@ npm run dev
 
 - Backend ควรเปิดที่พอร์ต 5000 (หรือพอร์ตที่ตั้งไว้ โดยที่ตั้งไว้ในโค้ดจะเป็น 5003)
 - Frontend เปิดที่ 5173
+
+## Extension ที่แนะนำสำหรับการพัฒนา
+
+### Tailwind CSS IntelliSense
+
+ช่วยเพิ่ม **Auto-complete** และ **Syntax Highlighting** สำหรับ **Tailwind CSS** บน VS Code
+
+<h3>📌 ตัวอย่าง UI ใน VS Code</h3>
+
+<p style="text-align: center;">
+  <img src="https://bradlc.gallerycdn.vsassets.io/extensions/bradlc/vscode-tailwindcss/0.14.20/1748529157003/Microsoft.VisualStudio.Services.Icons.Default" width="100" alt="โลโก้ Tailwind CSS IntelliSense">
+
+<p style="text-align: center;">
+  <img src="https://raw.githubusercontent.com/tailwindlabs/tailwindcss-intellisense/main/packages/vscode-tailwindcss/.github/banner.png" width="700" alt="ตัวอย่าง UI">
+</p>
