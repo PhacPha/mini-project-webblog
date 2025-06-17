@@ -84,6 +84,14 @@ export default function Dashboard() {
     }
   };
 
+  const handleEdit = (post) => {
+    setEditId(post.id);
+    setEditTitle(post.title);
+    setEditContent(post.content);
+    setEditSummary(post.summary || "");
+    setEditTags(post.tags ? post.tags.join(", ") : "");
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (!editTitle.trim()) {
@@ -318,102 +326,174 @@ export default function Dashboard() {
                   key={post.id}
                   className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl space-y-4"
                 >
-                  <div>
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-                      {post.title}
-                    </h2>
-                    {post.summary && (
-                      <p className="text-gray-300 mb-4 italic">{post.summary}</p>
-                    )}
-                    <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{post.content}</p>
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {post.tags && post.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="text-sm text-gray-400 mt-4 flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white">
-                        {post.author.username[0].toUpperCase()}
-                      </span>
-                      <span>Posted by {post.author.username}</span>
-                      <span>•</span>
-                      <span>{post.created_at}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-6 pt-4 border-t border-purple-500/20">
-                    <button
-                      className="flex items-center gap-2 text-gray-300 hover:text-pink-400 transition-colors duration-300"
-                      onClick={() => handleLikePost(post.id)}
-                    >
-                      <span className="text-xl">❤️</span>
-                      <span>{post.likes_count}</span>
-                    </button>
-                    <button
-                      className="flex items-center gap-2 text-gray-300 hover:text-purple-400 transition-colors duration-300"
-                      onClick={() => setSelectedPost(selectedPost === post.id ? null : post.id)}
-                    >
-                      <span className="text-xl">💬</span>
-                      <span>{post.comments_count}</span>
-                    </button>
-                  </div>
-
-                  {selectedPost === post.id && (
-                    <div className="space-y-4 pt-4 border-t border-purple-500/20">
-                      <div className="space-y-3">
-                        {post.comments && post.comments.map((comment) => (
-                          <div key={comment.id} className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white text-sm">
-                                {comment.author.username[0].toUpperCase()}
-                              </span>
-                              <span className="text-sm text-gray-400">
-                                {comment.author.username}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                • {comment.created_at}
-                              </span>
-                            </div>
-                            <p className="text-gray-300">{comment.content}</p>
-                          </div>
-                        ))}
+                  {editId === post.id ? (
+                    // Edit Form
+                    <form onSubmit={handleUpdate} className="space-y-4">
+                      <div>
+                        <label className="block text-gray-300 text-sm font-medium mb-2">
+                          Title
+                        </label>
+                        <input
+                          type="text"
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          className="w-full bg-white/10 border border-white/20 text-gray-100 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
+                          placeholder="Enter post title"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-300 text-sm font-medium mb-2">
+                          Summary
+                        </label>
+                        <textarea
+                          value={editSummary}
+                          onChange={(e) => setEditSummary(e.target.value)}
+                          className="w-full bg-white/10 border border-white/20 text-gray-100 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
+                          rows="2"
+                          placeholder="Enter post summary"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-300 text-sm font-medium mb-2">
+                          Content
+                        </label>
+                        <textarea
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          className="w-full bg-white/10 border border-white/20 text-gray-100 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
+                          rows="4"
+                          placeholder="Enter post content"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-300 text-sm font-medium mb-2">
+                          Tags (comma-separated)
+                        </label>
+                        <input
+                          type="text"
+                          value={editTags}
+                          onChange={(e) => setEditTags(e.target.value)}
+                          className="w-full bg-white/10 border border-white/20 text-gray-100 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
+                          placeholder="Enter tags (e.g., tech, lifestyle, travel)"
+                        />
                       </div>
                       <div className="flex gap-3">
-                        <input
-                          className="flex-1 bg-white/10 border border-white/20 text-gray-100 rounded-2xl px-4 py-2 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
-                          placeholder="Write a comment..."
-                          value={commentContent}
-                          onChange={(e) => setCommentContent(e.target.value)}
-                        />
                         <button
-                          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
-                          onClick={() => handleComment(post.id)}
+                          type="submit"
+                          className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
                         >
-                          Comment
+                          Save Changes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditId(null)}
+                          className="flex-1 bg-black/50 border border-purple-500/30 text-gray-300 px-6 py-3 rounded-xl transition-all duration-300 hover:bg-purple-500/20"
+                        >
+                          Cancel
                         </button>
                       </div>
-                    </div>
-                  )}
+                    </form>
+                  ) : (
+                    // View Mode
+                    <>
+                      <div>
+                        <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+                          {post.title}
+                        </h2>
+                        {post.summary && (
+                          <p className="text-gray-300 mb-4 italic">{post.summary}</p>
+                        )}
+                        <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{post.content}</p>
+                        <div className="flex flex-wrap gap-2 mt-4">
+                          {post.tags && post.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="text-sm text-gray-400 mt-4 flex items-center gap-2">
+                          <span className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white">
+                            {post.author.username[0].toUpperCase()}
+                          </span>
+                          <span>Posted by {post.author.username}</span>
+                          <span>•</span>
+                          <span>{post.created_at}</span>
+                        </div>
+                      </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-purple-500/20">
-                    <button
-                      className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
-                      onClick={() => handleEdit(post)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="flex-1 bg-black/50 border border-red-500/30 text-red-300 px-6 py-3 rounded-xl transition-all duration-300 hover:bg-red-500/20"
-                      onClick={() => handleDelete(post.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
+                      <div className="flex items-center gap-6 pt-4 border-t border-purple-500/20">
+                        <button
+                          className="flex items-center gap-2 text-gray-300 hover:text-pink-400 transition-colors duration-300"
+                          onClick={() => handleLikePost(post.id)}
+                        >
+                          <span className="text-xl">❤️</span>
+                          <span>{post.likes_count}</span>
+                        </button>
+                        <button
+                          className="flex items-center gap-2 text-gray-300 hover:text-purple-400 transition-colors duration-300"
+                          onClick={() => setSelectedPost(selectedPost === post.id ? null : post.id)}
+                        >
+                          <span className="text-xl">💬</span>
+                          <span>{post.comments_count}</span>
+                        </button>
+                      </div>
+
+                      {selectedPost === post.id && (
+                        <div className="space-y-4 pt-4 border-t border-purple-500/20">
+                          <div className="space-y-3">
+                            {post.comments && post.comments.map((comment) => (
+                              <div key={comment.id} className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white text-sm">
+                                    {comment.author.username[0].toUpperCase()}
+                                  </span>
+                                  <span className="text-sm text-gray-400">
+                                    {comment.author.username}
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    • {comment.created_at}
+                                  </span>
+                                </div>
+                                <p className="text-gray-300">{comment.content}</p>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="flex gap-3">
+                            <input
+                              className="flex-1 bg-white/10 border border-white/20 text-gray-100 rounded-2xl px-4 py-2 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
+                              placeholder="Write a comment..."
+                              value={commentContent}
+                              onChange={(e) => setCommentContent(e.target.value)}
+                            />
+                            <button
+                              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
+                              onClick={() => handleComment(post.id)}
+                            >
+                              Comment
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex gap-3 pt-4 border-t border-purple-500/20">
+                        <button
+                          className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
+                          onClick={() => handleEdit(post)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="flex-1 bg-black/50 border border-red-500/30 text-red-300 px-6 py-3 rounded-xl transition-all duration-300 hover:bg-red-500/20"
+                          onClick={() => handleDelete(post.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))
             )}
