@@ -3,7 +3,7 @@ class Config:
     SECRET_KEY = 'your-secret-key'
     JWT_SECRET_KEY = 'your-jwt-secret'
     MONGODB_SETTINGS = {
-        'db': 'daily_notes',
+        'db': 'mini-project-webblog',
         'host': 'localhost',
         'port': 27017
     }
