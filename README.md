@@ -55,3 +55,4 @@ npm run dev
 - ปรับแต่งสี/ธีมง่ายมากด้วย Tailwind CSS
 - สามารถ deploy ได้ทั้ง backend (Heroku, Render, etc.) และ frontend (Vercel, Netlify)
 - หากต้องการฟีเจอร์เพิ่มเติม สามารถ fork และแก้ไขได้ทันที
+# mini-project-webblog
