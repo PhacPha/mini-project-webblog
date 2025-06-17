@@ -1,30 +1,29 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-
-function PrivateRoute({ children }) {
-  const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" />;
-}
+import Home from "./pages/Home";
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
           path="/dashboard"
           element={
-            <PrivateRoute>
+            localStorage.getItem("token") ? (
               <Dashboard />
-            </PrivateRoute>
+            ) : (
+              <Navigate to="/login" replace />
+            )
           }
         />
-        <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
