@@ -24,6 +24,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
+  const username = localStorage.getItem("username");
 
   useEffect(() => {
     if (!token) {
@@ -38,9 +39,11 @@ export default function Dashboard() {
     try {
       setLoading(true);
       const data = await getPosts(currentPage, 10, selectedTag);
-      if (data && data.posts) {
-        setPosts(data.posts);
-        setTotalPages(Math.ceil(data.total / data.per_page));
+      if (data && Array.isArray(data)) {
+        // Filter posts to show only the current user's posts
+        const userPosts = data.filter(post => post.author.username === username);
+        setPosts(userPosts);
+        setTotalPages(Math.ceil(userPosts.length / 10));
       } else {
         setPosts([]);
         setTotalPages(1);
@@ -54,100 +57,101 @@ export default function Dashboard() {
     }
   };
 
-  const handleCreate = async (e) => {
+  const handleCreatePost = async (e) => {
     e.preventDefault();
-    if (!title) return setMsg("Please enter a title");
-    const tagArray = tags.split(",").map(tag => tag.trim()).filter(tag => tag);
-    const data = await createPost(token, title, content, summary, tagArray);
-    setMsg(data.msg);
-    setTitle("");
-    setContent("");
-    setSummary("");
-    setTags("");
-    fetchPosts();
-  };
-
-  const handleEdit = (post) => {
-    setEditId(post.id);
-    setEditTitle(post.title);
-    setEditContent(post.content);
-    setEditSummary(post.summary || "");
-    setEditTags(post.tags.join(", "));
+    if (!title.trim()) {
+      setMsg("Please enter a title");
+      return;
+    }
+    if (!content.trim()) {
+      setMsg("Please enter content");
+      return;
+    }
+    try {
+      const tagArray = tags.split(",").map(tag => tag.trim()).filter(tag => tag);
+      const data = await createPost(token, title, content, summary, tagArray);
+      if (data) {
+        setMsg("Post created successfully!");
+        setTitle("");
+        setContent("");
+        setSummary("");
+        setTags("");
+        setShowCreateForm(false);
+        fetchPosts();
+      }
+    } catch (error) {
+      setMsg(error.message || "Failed to create post");
+    }
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    if (!editTitle) return setMsg("Please enter a title");
-    const tagArray = editTags.split(",").map(tag => tag.trim()).filter(tag => tag);
-    const data = await updatePost(token, editId, editTitle, editContent, editSummary, tagArray);
-    setMsg(data.msg);
-    setEditId(null);
-    fetchPosts();
+    if (!editTitle.trim()) {
+      setMsg("Please enter a title");
+      return;
+    }
+    if (!editContent.trim()) {
+      setMsg("Please enter content");
+      return;
+    }
+    try {
+      const tagArray = editTags.split(",").map(tag => tag.trim()).filter(tag => tag);
+      const data = await updatePost(token, editId, editTitle, editContent, editSummary, tagArray);
+      if (data) {
+        setMsg("Post updated successfully!");
+        setEditId(null);
+        fetchPosts();
+      }
+    } catch (error) {
+      setMsg(error.message || "Failed to update post");
+    }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
-    const data = await deletePost(token, id);
-    setMsg(data.msg);
-    fetchPosts();
-  };
-
-  const handleLike = async (postId) => {
-    const data = await likePost(token, postId);
-    setMsg(data.msg);
-    fetchPosts();
-  };
-
-  const handleComment = async (postId) => {
-    if (!commentContent.trim()) return;
-    const data = await addComment(token, postId, commentContent);
-    setMsg(data.msg);
-    setCommentContent("");
-    fetchPosts();
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
-  const handleCreatePost = async (e) => {
-    e.preventDefault();
-    if (!title) return setMsg("Please enter a title");
-    const tagArray = tags.split(",").map(tag => tag.trim()).filter(tag => tag);
-    const data = await createPost(token, title, content, summary, tagArray);
-    if (data) {
-      setMsg(data.msg);
-      setTitle("");
-      setContent("");
-      setSummary("");
-      setTags("");
-      setShowCreateForm(false);
-      fetchPosts();
-    } else {
-      setMsg("Failed to create post");
-    }
-  };
-
-  const handleCreateComment = async (postId) => {
-    if (!commentContent.trim()) return;
-    const data = await addComment(token, postId, commentContent);
-    if (data) {
-      setMsg(data.msg);
-      setCommentContent("");
-      fetchPosts();
-    } else {
-      setMsg("Failed to create comment");
+    try {
+      const data = await deletePost(token, id);
+      if (data) {
+        setMsg("Post deleted successfully!");
+        fetchPosts();
+      }
+    } catch (error) {
+      setMsg(error.message || "Failed to delete post");
     }
   };
 
   const handleLikePost = async (postId) => {
-    const data = await likePost(token, postId);
-    if (data) {
-      fetchPosts();
-    } else {
-      setMsg("Failed to like post");
+    try {
+      const data = await likePost(token, postId);
+      if (data) {
+        fetchPosts();
+      }
+    } catch (error) {
+      setMsg(error.message || "Failed to like post");
     }
+  };
+
+  const handleComment = async (postId) => {
+    if (!commentContent.trim()) {
+      setMsg("Please enter a comment");
+      return;
+    }
+    try {
+      const data = await addComment(token, postId, commentContent);
+      if (data) {
+        setMsg("Comment added successfully!");
+        setCommentContent("");
+        fetchPosts();
+      }
+    } catch (error) {
+      setMsg(error.message || "Failed to add comment");
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    navigate("/login");
   };
 
   return (
@@ -194,25 +198,6 @@ export default function Dashboard() {
               </svg>
               Create Blog
             </button>
-          </div>
-        )}
-
-        {/* Loading State */}
-        {loading && (
-          <div className="flex justify-center items-center py-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
-          </div>
-        )}
-
-        {/* Error Message */}
-        {msg && !loading && (
-          <div className="mb-8 bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-300 px-4 py-3 rounded-2xl text-center">
-            <div className="flex items-center justify-center gap-2">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {msg}
-            </div>
           </div>
         )}
 
@@ -301,34 +286,22 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Tag Filter */}
-        {!loading && posts.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6">
-            <button
-              className={`px-4 py-2 rounded-xl text-sm transition-all duration-300 ${
-                selectedTag === null
-                  ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
-                  : "bg-black/40 border border-purple-500/20 text-gray-300 hover:bg-purple-500/20"
-              }`}
-              onClick={() => setSelectedTag(null)}
-            >
-              All
-            </button>
-            {Array.from(
-              new Set(posts.flatMap((post) => post.tags || []))
-            ).map((tag) => (
-              <button
-                key={tag}
-                className={`px-4 py-2 rounded-xl text-sm transition-all duration-300 ${
-                  selectedTag === tag
-                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
-                    : "bg-black/40 border border-purple-500/20 text-gray-300 hover:bg-purple-500/20"
-                }`}
-                onClick={() => setSelectedTag(tag)}
-              >
-                {tag}
-              </button>
-            ))}
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center py-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {msg && !loading && (
+          <div className="mb-8 bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-300 px-4 py-3 rounded-2xl text-center">
+            <div className="flex items-center justify-center gap-2">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {msg}
+            </div>
           </div>
         )}
 
@@ -340,176 +313,109 @@ export default function Dashboard() {
                 No posts yet
               </div>
             ) : (
-              posts.map((post) =>
-                editId === post.id ? (
-                  // Edit Mode
-                  <form
-                    key={post.id}
-                    onSubmit={handleUpdate}
-                    className="space-y-4 bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl"
-                  >
-                    <div>
-                      <label className="block text-gray-300 text-sm font-medium mb-2">
-                        Edit Title
-                      </label>
-                      <textarea
-                        className="w-full bg-white/10 border border-white/20 text-gray-100 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
-                        rows="1"
-                        value={editTitle}
-                        onChange={(e) => setEditTitle(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-300 text-sm font-medium mb-2">
-                        Edit Summary
-                      </label>
-                      <textarea
-                        className="w-full bg-white/10 border border-white/20 text-gray-100 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
-                        rows="2"
-                        value={editSummary}
-                        onChange={(e) => setEditSummary(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-300 text-sm font-medium mb-2">
-                        Edit Content
-                      </label>
-                      <textarea
-                        className="w-full bg-white/10 border border-white/20 text-gray-100 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
-                        rows="4"
-                        value={editContent}
-                        onChange={(e) => setEditContent(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-300 text-sm font-medium mb-2">
-                        Edit Tags (comma-separated)
-                      </label>
-                      <textarea
-                        className="w-full bg-white/10 border border-white/20 text-gray-100 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
-                        rows="2"
-                        value={editTags}
-                        onChange={(e) => setEditTags(e.target.value)}
-                      />
-                    </div>
-                    <div className="flex gap-3">
-                      <button className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
-                        Save
-                      </button>
-                      <button
-                        type="button"
-                        className="flex-1 bg-black/50 border border-purple-500/30 text-gray-300 px-6 py-3 rounded-xl transition-all duration-300 hover:bg-purple-500/20"
-                        onClick={() => setEditId(null)}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  // View Mode
-                  <div
-                    key={post.id}
-                    className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl space-y-4"
-                  >
-                    <div>
-                      <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-                        {post.title}
-                      </h2>
-                      {post.summary && (
-                        <p className="text-gray-300 mb-4 italic">{post.summary}</p>
-                      )}
-                      <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{post.content}</p>
-                      <div className="flex flex-wrap gap-2 mt-4">
-                        {post.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="text-sm text-gray-400 mt-4 flex items-center gap-2">
-                        <span className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white">
-                          {post.author.username[0].toUpperCase()}
-                        </span>
-                        <span>Posted by {post.author.username}</span>
-                        <span>•</span>
-                        <span>{post.created_at}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-6 pt-4 border-t border-purple-500/20">
-                      <button
-                        className="flex items-center gap-2 text-gray-300 hover:text-pink-400 transition-colors duration-300"
-                        onClick={() => handleLikePost(post.id)}
-                      >
-                        <span className="text-xl">❤️</span>
-                        <span>{post.likes_count}</span>
-                      </button>
-                      <button
-                        className="flex items-center gap-2 text-gray-300 hover:text-purple-400 transition-colors duration-300"
-                        onClick={() => setSelectedPost(selectedPost === post.id ? null : post.id)}
-                      >
-                        <span className="text-xl">💬</span>
-                        <span>{post.comments_count}</span>
-                      </button>
-                    </div>
-
-                    {selectedPost === post.id && (
-                      <div className="space-y-4 pt-4 border-t border-purple-500/20">
-                        <div className="space-y-3">
-                          {post.comments.map((comment) => (
-                            <div key={comment.id} className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white text-sm">
-                                  {comment.author.username[0].toUpperCase()}
-                                </span>
-                                <span className="text-sm text-gray-400">
-                                  {comment.author.username}
-                                </span>
-                                <span className="text-xs text-gray-500">
-                                  • {comment.created_at}
-                                </span>
-                              </div>
-                              <p className="text-gray-300">{comment.content}</p>
-                            </div>
-                          ))}
-                        </div>
-                        <div className="flex gap-3">
-                          <input
-                            className="flex-1 bg-white/10 border border-white/20 text-gray-100 rounded-2xl px-4 py-2 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
-                            placeholder="Write a comment..."
-                            value={commentContent}
-                            onChange={(e) => setCommentContent(e.target.value)}
-                          />
-                          <button
-                            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
-                            onClick={() => handleComment(post.id)}
-                          >
-                            Comment
-                          </button>
-                        </div>
-                      </div>
+              posts.map((post) => (
+                <div
+                  key={post.id}
+                  className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl space-y-4"
+                >
+                  <div>
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+                      {post.title}
+                    </h2>
+                    {post.summary && (
+                      <p className="text-gray-300 mb-4 italic">{post.summary}</p>
                     )}
-
-                    <div className="flex gap-3 pt-4 border-t border-purple-500/20">
-                      <button
-                        className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
-                        onClick={() => handleEdit(post)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="flex-1 bg-black/50 border border-red-500/30 text-red-300 px-6 py-3 rounded-xl transition-all duration-300 hover:bg-red-500/20"
-                        onClick={() => handleDelete(post.id)}
-                      >
-                        Delete
-                      </button>
+                    <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{post.content}</p>
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {post.tags && post.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="text-sm text-gray-400 mt-4 flex items-center gap-2">
+                      <span className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white">
+                        {post.author.username[0].toUpperCase()}
+                      </span>
+                      <span>Posted by {post.author.username}</span>
+                      <span>•</span>
+                      <span>{post.created_at}</span>
                     </div>
                   </div>
-                )
-              )
+
+                  <div className="flex items-center gap-6 pt-4 border-t border-purple-500/20">
+                    <button
+                      className="flex items-center gap-2 text-gray-300 hover:text-pink-400 transition-colors duration-300"
+                      onClick={() => handleLikePost(post.id)}
+                    >
+                      <span className="text-xl">❤️</span>
+                      <span>{post.likes_count}</span>
+                    </button>
+                    <button
+                      className="flex items-center gap-2 text-gray-300 hover:text-purple-400 transition-colors duration-300"
+                      onClick={() => setSelectedPost(selectedPost === post.id ? null : post.id)}
+                    >
+                      <span className="text-xl">💬</span>
+                      <span>{post.comments_count}</span>
+                    </button>
+                  </div>
+
+                  {selectedPost === post.id && (
+                    <div className="space-y-4 pt-4 border-t border-purple-500/20">
+                      <div className="space-y-3">
+                        {post.comments && post.comments.map((comment) => (
+                          <div key={comment.id} className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white text-sm">
+                                {comment.author.username[0].toUpperCase()}
+                              </span>
+                              <span className="text-sm text-gray-400">
+                                {comment.author.username}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                • {comment.created_at}
+                              </span>
+                            </div>
+                            <p className="text-gray-300">{comment.content}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex gap-3">
+                        <input
+                          className="flex-1 bg-white/10 border border-white/20 text-gray-100 rounded-2xl px-4 py-2 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
+                          placeholder="Write a comment..."
+                          value={commentContent}
+                          onChange={(e) => setCommentContent(e.target.value)}
+                        />
+                        <button
+                          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
+                          onClick={() => handleComment(post.id)}
+                        >
+                          Comment
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3 pt-4 border-t border-purple-500/20">
+                    <button
+                      className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
+                      onClick={() => handleEdit(post)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="flex-1 bg-black/50 border border-red-500/30 text-red-300 px-6 py-3 rounded-xl transition-all duration-300 hover:bg-red-500/20"
+                      onClick={() => handleDelete(post.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
             )}
           </div>
         )}
