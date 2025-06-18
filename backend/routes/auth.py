@@ -12,10 +12,10 @@ def register():
         data = request.get_json()
         if not data or 'username' not in data or 'password' not in data:
             return jsonify({"msg": "Missing username or password"}), 400
-            
+        
         if User.objects(username=data['username']):
             return jsonify({"msg": "Username already exists"}), 400
-            
+        
         hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256')
         user = User(username=data['username'], password=hashed_pw)
         user.save()
@@ -29,11 +29,11 @@ def login():
         data = request.get_json()
         if not data or 'username' not in data or 'password' not in data:
             return jsonify({"msg": "Missing username or password"}), 400
-            
+        
         user = User.objects(username=data['username']).first()
         if not user or not check_password_hash(user.password, data['password']):
             return jsonify({"msg": "Invalid username or password"}), 401
-            
+        
         token = create_access_token(identity=str(user.id))
         return jsonify({
             "msg": "Login successful",
@@ -41,4 +41,4 @@ def login():
             "username": user.username
         }), 200
     except Exception as e:
-        return jsonify({"msg": str(e)}), 500
+        return jsonify({"msg": str(e)}), 500 

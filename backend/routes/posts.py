@@ -157,6 +157,13 @@ def add_comment(post_id):
         user=user,
         post=post
     )
+    
+    # Handle reply
+    if 'reply_to' in data and data['reply_to']:
+        parent_comment = Comment.objects(id=data['reply_to']).first()
+        if parent_comment:
+            comment.parent = parent_comment
+    
     comment.save()
     post.comments.append(comment)
     post.save()
@@ -171,6 +178,7 @@ def add_comment(post_id):
                 "id": str(user.id),
                 "username": user.username,
                 "avatar": user.avatar
-            }
+            },
+            "parent_id": str(comment.parent.id) if comment.parent else None
         }
     })
