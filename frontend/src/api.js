@@ -2,11 +2,11 @@ const API_URL = "http://localhost:5003/api";
 
 export const register = async (username, password) => {
   try {
-    const res = await fetch(`${API_URL}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
+  const res = await fetch(`${API_URL}/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
     const data = await res.json();
     if (!res.ok) {
       throw new Error(data.msg || "Registration failed");
@@ -19,11 +19,11 @@ export const register = async (username, password) => {
 
 export const login = async (username, password) => {
   try {
-    const res = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
+  const res = await fetch(`${API_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
     const data = await res.json();
     if (!res.ok) {
       throw new Error(data.msg || "Login failed");
@@ -98,14 +98,22 @@ export const likePost = async (token, postId) => {
   return res.json();
 };
 
-export const addComment = async (token, postId, content) => {
-  const res = await fetch(`${API_URL}/posts/${postId}/comments`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ content }),
-  });
-  return res.json();
+export const addComment = async (token, postId, content, replyToId = null) => {
+  try {
+    const res = await fetch(`${API_URL}/posts/${postId}/comments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ content, reply_to: replyToId }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.msg || "Failed to add comment");
+    }
+    return data;
+  } catch (error) {
+    throw error;
+  }
 };

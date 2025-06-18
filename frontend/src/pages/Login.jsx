@@ -11,7 +11,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const data = await login(username, password);
+    const data = await login(username, password);
       localStorage.setItem("token", data.access_token);
       localStorage.setItem("username", data.username);
       navigate("/");
@@ -47,14 +47,14 @@ export default function Login() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
-                <input
+          <input
                   className="w-full bg-white/10 border border-white/20 text-gray-100 rounded-2xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
-                  type="text"
+            type="text"
                   placeholder="Enter your username"
-                  value={username}
-                  autoFocus
-                  onChange={(e) => setUsername(e.target.value)}
-                />
+            value={username}
+            autoFocus
+            onChange={(e) => setUsername(e.target.value)}
+          />
               </div>
             </div>
             <div>
@@ -67,27 +67,27 @@ export default function Login() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </div>
-                <input
+          <input
                   className="w-full bg-white/10 border border-white/20 text-gray-100 rounded-2xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
-                  type="password"
+            type="password"
                   placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
               </div>
             </div>
-            <button
+          <button
               className="w-full bg-gradient-to-r from-purple-600/80 to-pink-600/80 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg backdrop-blur-sm"
-              type="submit"
-            >
+            type="submit"
+          >
               <div className="flex items-center justify-center gap-2">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                 </svg>
-                Login
+            Login
               </div>
-            </button>
-          </form>
+          </button>
+        </form>
 
           {msg && (
             <div className="mt-4 bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-300 px-4 py-3 rounded-2xl text-center">
@@ -107,8 +107,8 @@ export default function Login() {
               className="text-purple-400 font-medium hover:text-pink-400 transition-colors duration-300"
             >
               Register
-            </Link>
-          </p>
+          </Link>
+        </p>
         </div>
 
         {/* Footer */}

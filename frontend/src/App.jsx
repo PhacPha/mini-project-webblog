@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
+import BlogDetails from "./pages/BlogDetails";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             )
           }
         />
+        <Route path="/post/:id" element={<BlogDetails />} />
       </Routes>
     </Router>
   );

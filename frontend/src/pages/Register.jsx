@@ -33,11 +33,11 @@ export default function Register() {
     try {
       setLoading(true);
       setMsg("");
-      const data = await register(username, password);
+    const data = await register(username, password);
       if (data.access_token) {
         setMsg("Registration successful! Redirecting to login...");
         setTimeout(() => {
-          navigate("/login");
+      navigate("/login");
         }, 1500);
       }
     } catch (error) {
@@ -74,17 +74,17 @@ export default function Register() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
-                <input
+          <input
                   className="w-full bg-white/10 border border-white/20 text-gray-100 rounded-2xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
-                  type="text"
+            type="text"
                   placeholder="Choose a username"
-                  value={username}
-                  autoFocus
+            value={username}
+            autoFocus
                   onChange={(e) => {
                     setUsername(e.target.value);
                     setMsg("");
                   }}
-                />
+          />
               </div>
             </div>
             <div>
@@ -97,21 +97,21 @@ export default function Register() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </div>
-                <input
+          <input
                   className="w-full bg-white/10 border border-white/20 text-gray-100 rounded-2xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-300 placeholder-gray-400"
-                  type="password"
+            type="password"
                   placeholder="Choose a password"
-                  value={password}
+            value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
                     setMsg("");
                   }}
-                />
+          />
               </div>
             </div>
-            <button
+          <button
               className="w-full bg-gradient-to-r from-purple-600/80 to-pink-600/80 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
-              type="submit"
+            type="submit"
               disabled={loading}
             >
               <div className="flex items-center justify-center gap-2">
@@ -124,8 +124,8 @@ export default function Register() {
                 )}
                 {loading ? "Registering..." : "Register"}
               </div>
-            </button>
-          </form>
+          </button>
+        </form>
 
           {msg && (
             <div className={`mt-4 px-4 py-3 rounded-2xl text-center ${
@@ -155,8 +155,8 @@ export default function Register() {
               className="text-purple-400 font-medium hover:text-pink-400 transition-colors duration-300"
             >
               Login
-            </Link>
-          </p>
+          </Link>
+        </p>
         </div>
 
         {/* Footer */}

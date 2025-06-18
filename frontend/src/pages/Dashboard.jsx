@@ -72,8 +72,8 @@ export default function Dashboard() {
       const data = await createPost(token, title, content, summary, tagArray);
       if (data) {
         setMsg("Post created successfully!");
-        setTitle("");
-        setContent("");
+    setTitle("");
+    setContent("");
         setSummary("");
         setTags("");
         setShowCreateForm(false);
@@ -107,7 +107,7 @@ export default function Dashboard() {
       const data = await updatePost(token, editId, editTitle, editContent, editSummary, tagArray);
       if (data) {
         setMsg("Post updated successfully!");
-        setEditId(null);
+    setEditId(null);
         fetchPosts();
       }
     } catch (error) {
@@ -180,15 +180,15 @@ export default function Dashboard() {
               </svg>
               Home
             </Link>
-            <button
-              onClick={handleLogout}
+          <button
+            onClick={handleLogout}
               className="bg-white/10 hover:bg-white/20 text-gray-200 px-4 py-2 rounded-2xl transition-all duration-300 flex items-center gap-2"
-            >
+          >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
-              Logout
-            </button>
+            Logout
+          </button>
           </div>
         </div>
       </header>
@@ -205,7 +205,7 @@ export default function Dashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               Create Blog
-            </button>
+          </button>
           </div>
         )}
 
@@ -392,9 +392,9 @@ export default function Dashboard() {
                           Cancel
                         </button>
                       </div>
-                    </form>
-                  ) : (
-                    // View Mode
+              </form>
+            ) : (
+              // View Mode
                     <>
                       <div>
                         <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
@@ -475,29 +475,29 @@ export default function Dashboard() {
                               Comment
                             </button>
                           </div>
-                        </div>
+                </div>
                       )}
 
                       <div className="flex gap-3 pt-4 border-t border-purple-500/20">
-                        <button
+                  <button
                           className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
                           onClick={() => handleEdit(post)}
-                        >
-                          Edit
-                        </button>
-                        <button
+                  >
+                    Edit
+                  </button>
+                  <button
                           className="flex-1 bg-black/50 border border-red-500/30 text-red-300 px-6 py-3 rounded-xl transition-all duration-300 hover:bg-red-500/20"
                           onClick={() => handleDelete(post.id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
+                  >
+                    Delete
+                  </button>
+                </div>
                     </>
                   )}
-                </div>
+              </div>
               ))
-            )}
-          </div>
+          )}
+        </div>
         )}
 
         {/* Pagination */}
@@ -520,7 +520,7 @@ export default function Dashboard() {
             >
               Next
             </button>
-          </div>
+      </div>
         )}
       </main>
     </div>
